@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Roboto as FontSans } from "next/font/google";
 import "./globals.css";
+import Header from "@/components/common/Header";
+import Footer from "@/components/common/Footer";
 
 const fontSans = FontSans({
   variable: "--font-geist-sans",
@@ -8,10 +10,10 @@ const fontSans = FontSans({
   weight: ["400", "500", "600", "700"],
 });
 
-
 export const metadata: Metadata = {
   title: "Summo - AI PDF Summarizer",
-  description: "Save hours of reading time. Summo is a tool that helps you summarize articles and documents using AI.",
+  description:
+    "Save hours of reading time. Summo is a tool that helps you summarize articles and documents using AI.",
 };
 
 export default function RootLayout({
@@ -21,10 +23,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${fontSans.variable} antialiased`}
-      >
-        {children}
+      <body className={`${fontSans.variable} antialiased`}>
+        <div className="relative flex min-h-screen flex-col">
+          <Header />
+          <main className="flex-1">{children}</main>
+          <Footer />
+        </div>
       </body>
     </html>
   );
