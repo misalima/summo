@@ -3,6 +3,7 @@ import z from "zod";
 import UploadFormInput from "./UploadFormInput";
 import { useUploadThing } from "@/app/utils/uploadthing";
 import { toast } from "sonner";
+import { generatePDFSummary } from "@/actions/upload-actions";
 
 const schema = z.object({
   file: z.instanceof(File, {message: "File is required"})
@@ -49,14 +50,16 @@ export default function UploadForm() {
     toast.info("Uploading file...");
     
     //upload to uploadthing
-    const response = await startUpload([file]);
-    if (!response) {
+    const resp = await startUpload([file]);
+    if (!resp) {
       toast.error("Something went wrong.", {
         description: "Please try again.",
       });
       return;
     }
     //parse the pdf 
+    const summary = await generatePDFSummary(resp);
+    console.log("Summary", summary);
     //summarize the pdf
     //save the summary to the database
     //redirect to the summary page
