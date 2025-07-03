@@ -5,6 +5,7 @@ import { getPDFText } from "@/lib/langchain";
 import { getNeonDB } from "@/lib/neondb";
 import { formatFileNameAsTitle } from "@/lib/utils";
 import { auth } from "@clerk/nextjs/server";
+import { revalidatePath } from "next/cache";
 
 interface PDFSummary {
   userId?: string;
@@ -143,10 +144,7 @@ export async function storePDFSummaryAction({fileUrl, summary, title, fileName}:
         message: "Error saving PDF summary to DB",
       }
     }
-    return  {
-      success: true,
-      message: "PDF summary saved to DB",
-    }
+    
   } catch (error) {
     console.error("Error saving PDF summary to DB", error);
     return {
@@ -156,5 +154,16 @@ export async function storePDFSummaryAction({fileUrl, summary, title, fileName}:
           ? error.message
           : "Error saving PDF summary to DB",
     };
+  }
+
+  //revalidate the summary page
+  revalidatePath(`/summaries/${savedSummary.id}`);
+
+  return  {
+    success: true,
+    message: "PDF summary saved to DB",
+    data: {
+      id: savedSummary.id
+    }
   }
 }

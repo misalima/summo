@@ -8,6 +8,7 @@ import {
   storePDFSummaryAction,
 } from "@/actions/upload-actions";
 import { useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 
 const schema = z.object({
   file: z
@@ -21,6 +22,7 @@ const schema = z.object({
 });
 
 export default function UploadForm() {
+  const router = useRouter()
   const formRef = useRef<HTMLFormElement>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -95,8 +97,7 @@ export default function UploadForm() {
           toast.success("Summary generated successfully");
           setIsLoading(false);
           formRef.current?.reset();
-
-          //todo: redirect to the summary page
+          router.push(`/summaries/${storeResult.id}`);
         }
       }
     } catch (error) {
