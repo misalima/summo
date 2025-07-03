@@ -6,12 +6,13 @@ import { FileTextIcon } from "lucide-react";
 const SummaryHeader = ({
   fileUrl,
   title,
-  createdAt,
+  created_at,
 }: {
   fileUrl: string;
   title: string | null;
-  createdAt: string;
+  created_at: string;
 }) => {
+    console.log(created_at);
   return (
     <div className="flex items-start gap-2 sm:gap-4">
       <FileTextIcon className="w-6 h-6 sm:w-8 sm:h-8" />
@@ -19,7 +20,7 @@ const SummaryHeader = ({
         <h3 className="text-base xl:text-lg font-semibold text-gray-900 truncate w-4/5">
           {title}
         </h3>
-        <p className="text-sm text-gray-400">{createdAt}</p>
+        <p className="text-sm text-gray-400">{new Date(created_at).toLocaleDateString()}</p>
       </div>
     </div>
   );
@@ -47,7 +48,7 @@ export default function SummaryCard({ summary }: { summary: any }) {
             <SummaryHeader
               fileUrl={summary.fileUrl}
               title={summary.title}
-              createdAt={summary.createdAt}
+              created_at={summary.created_at}
             />
             <p className="line-clamp-2 text-sm text-gray-600 mt-2 sm:text-base pl-2">
               {summary.summary}

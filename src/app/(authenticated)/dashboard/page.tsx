@@ -1,40 +1,18 @@
 import SummaryCard from "@/components/summaries/SummaryCard";
 import { Button } from "@/components/ui/button";
+import { getSummaries } from "@/lib/summaries";
+import { currentUser } from "@clerk/nextjs/server";
 import { Plus } from "lucide-react";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+    const user = await currentUser();
+    if (!user) redirect("/sign-in");
+    
+    const userId = user.id;
     const uploadLimit = 5;
-    const summaries = [
-        {
-            id: 1,
-            title: "Summary 1",
-            createdAt: "2024-01-01",
-            summary: "This is a summary of the PDF",
-            status: "pending",
-        },
-        {
-            id: 2,
-            title: "Summary 2",
-            createdAt: "2024-01-01",
-            summary: "This is a summary of the PDF",
-            status: "completed",
-        },
-        {
-            id: 3,
-            title: "Summary 3",
-            createdAt: "2024-01-01",
-            summary: "This is a summary of the PDF",
-            status: "completed",
-        },
-        {
-            id: 4,
-            title: "Summary 4",
-            createdAt: "2024-01-01",
-            summary: "This is a summary of the PDF",
-            status: "completed",
-        },
-    ];
+    const summaries = await getSummaries(userId);
 
   return (
     <main className="min-h-screen">
