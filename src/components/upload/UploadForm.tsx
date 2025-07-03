@@ -3,7 +3,10 @@ import z from "zod";
 import UploadFormInput from "./UploadFormInput";
 import { useUploadThing } from "@/app/utils/uploadthing";
 import { toast } from "sonner";
-import { generatePDFSummary } from "@/actions/upload-actions";
+import {
+  generatePDFSummary,
+  storePDFSummaryAction,
+} from "@/actions/upload-actions";
 import { useRef, useState } from "react";
 
 const schema = z.object({
@@ -79,29 +82,37 @@ export default function UploadForm() {
       const { data = null, message = null } = result || {};
 
       if (data) {
+        let storeResult: any;
         toast.info("Generating summary...");
-        formRef.current?.reset();
+
         if (data.summary) {
-          //save the summary to the database
+          storeResult = await storePDFSummaryAction({
+            summary: data.summary,
+            fileUrl: resp[0].serverData.file.url,
+            title: data.title,
+            fileName: file.name,
+          });
           toast.success("Summary generated successfully");
           setIsLoading(false);
-          return;
+          formRef.current?.reset();
+
+          //todo: redirect to the summary page
         }
       }
     } catch (error) {
       console.error("Error generating summary:", error);
       toast.error("Error generating summary");
       formRef.current?.reset();
-    }
-
-    //summarize the pdf
-    //save the summary to the database
-    //redirect to the summary page
+    }    
   };
 
   return (
     <div className="flex flex-col gap-6 w-full max-w-2xl mx-auto">
-      <UploadFormInput isLoading={isLoading} ref={formRef} onSubmit={handleSubmit} />
+      <UploadFormInput
+        isLoading={isLoading}
+        ref={formRef}
+        onSubmit={handleSubmit}
+      />
     </div>
   );
 }
