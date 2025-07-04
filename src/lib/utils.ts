@@ -16,3 +16,8 @@ export function formatFileNameAsTitle(fileName: string): string {
   .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
   .join(" ").trim();
 }
+
+export function formatFileNameFromUrl(url: string): string {
+  const fileName = url.split("/").pop() || "";
+  return fileName ? formatFileNameAsTitle(fileName) : "Untitled";
+}

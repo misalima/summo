@@ -94,10 +94,16 @@ export async function generatePDFSummary(
   }
 }
 
-export async function savePDFSummary({userId, fileUrl, summary, title, fileName}: PDFSummary) {
+export async function savePDFSummary({
+  userId,
+  fileUrl,
+  summary,
+  title,
+  fileName,
+}: PDFSummary) {
   try {
     const sql = await getNeonDB();
-    await sql`INSERT INTO pdf_summaries (
+    const [savedSummary] = await sql`INSERT INTO pdf_summaries (
   user_id,
   original_file_url,
   summary_text,
@@ -111,15 +117,22 @@ VALUES
     ${summary},
     ${title},
     ${fileName}
-  );`;
+  )
+  RETURNING id, summary_text;`;
 
-  } catch(error) {
+    return savedSummary;
+  } catch (error) {
     console.log("Error saving pdf summary to db", error);
     throw error;
   }
 }
 
-export async function storePDFSummaryAction({fileUrl, summary, title, fileName}: PDFSummary) {
+export async function storePDFSummaryAction({
+  fileUrl,
+  summary,
+  title,
+  fileName,
+}: PDFSummary) {
   let savedSummary: any;
   try {
     const { userId } = await auth();
@@ -142,8 +155,9 @@ export async function storePDFSummaryAction({fileUrl, summary, title, fileName}:
       return {
         success: false,
         message: "Error saving PDF summary to DB",
-      }
+      };
     }
+
     
   } catch (error) {
     console.error("Error saving PDF summary to DB", error);
@@ -159,11 +173,11 @@ export async function storePDFSummaryAction({fileUrl, summary, title, fileName}:
   //revalidate the summary page
   revalidatePath(`/summaries/${savedSummary.id}`);
 
-  return  {
+  return {
     success: true,
     message: "PDF summary saved to DB",
     data: {
-      id: savedSummary.id
-    }
-  }
+      id: savedSummary.id,
+    },
+  };
 }
