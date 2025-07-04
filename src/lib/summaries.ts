@@ -11,3 +11,4 @@ export async function getSummary(summaryId: string) {
     const summary = await sql`SELECT * FROM pdf_summaries where id = ${summaryId}`;
     return summary;
 }
+

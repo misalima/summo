@@ -1,3 +1,4 @@
+import EmptySummariesState from "@/components/summaries/EmptySummariesState";
 import SummaryCard from "@/components/summaries/SummaryCard";
 import { Button } from "@/components/ui/button";
 import { getSummaries } from "@/lib/summaries";
@@ -7,12 +8,12 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 export default async function DashboardPage() {
-    const user = await currentUser();
-    if (!user) redirect("/sign-in");
-    
-    const userId = user.id;
-    const uploadLimit = 5;
-    const summaries = await getSummaries(userId);
+  const user = await currentUser();
+  if (!user) redirect("/sign-in");
+
+  const userId = user.id;
+  const uploadLimit = 5;
+  const summaries = await getSummaries(userId);
 
   return (
     <main className="min-h-screen">
@@ -41,19 +42,29 @@ export default async function DashboardPage() {
           </div>
           <div className="mb-6">
             <div className="bg-rose-50 border border-rose-200 rounded-lg text-rose-800 p-4 flex justify-between items-center">
-              <p>You've have reached the limit of {uploadLimit} uploads on the Free Plan.</p>
-              <Button variant={"outline"} className="group hover:no-underline border-rose-800 border-3 bg-transparent hover:bg-rose-800/70 hover:text-white">
+              <p>
+                You've have reached the limit of {uploadLimit} uploads on the
+                Free Plan.
+              </p>
+              <Button
+                variant={"outline"}
+                className="group hover:no-underline border-rose-800 border-3 bg-transparent hover:bg-rose-800/70 hover:text-white"
+              >
                 <Link href="/pricing" className="flex items-center font-bold">
                   Upgrade to Pro
                 </Link>
               </Button>
             </div>
           </div>
-          <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3 sm:px-0">
-            {summaries.map((summary, index) => (
+          {summaries.length === 0 ? (
+            <EmptySummariesState />
+          ) : (
+            <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3 sm:px-0">
+              {summaries.map((summary, index) => (
                 <SummaryCard key={index} summary={summary} />
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </main>
