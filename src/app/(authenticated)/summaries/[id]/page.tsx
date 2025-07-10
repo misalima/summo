@@ -17,7 +17,7 @@ export default async function SummaryPage(props: {
     notFound();
   }
 
-  const { title, summary_text, file_name, word_count, created_at } = summary[0];
+  const { title, summary_text, file_name, word_count, created_at, original_file_url } = summary[0];
 
   const readingTime = Math.ceil(word_count / 200);
   return (
@@ -26,7 +26,7 @@ export default async function SummaryPage(props: {
         <div className="px-4 sm:px-6 lg:px-8 py-12 sm:py-24">
           <div className="flex flex-col">
             <SummaryHeader title={title} createdAt={created_at} readingTime={readingTime} />
-            {file_name && <SourceInfo fileName={file_name} />}
+            {file_name && <SourceInfo fileName={file_name} originalFileUrl={original_file_url} title={title} summaryText={summary_text} createdAt={created_at} />}
           </div>
           <div className="relative p-6 sm:p-8 backdrop:blur-md rounded-2xl sm:rounded-3xl shadow-xl">
             <div className="flex flex-col">
@@ -36,7 +36,7 @@ export default async function SummaryPage(props: {
                   {word_count} words
                 </p>
               </div>
-              <SummaryViewer summary={summary_text} />
+              <SummaryViewer summary={summary_text} title={title} />
             </div>
           </div>
         </div>

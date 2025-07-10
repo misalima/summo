@@ -30,7 +30,7 @@ export default function SummaryHeader({
           </div>
         </div>
         <div>
-          <Link href="/summaries">
+          <Link href="/dashboard">
             <Button
               className="sm:gap-2 group flex items-center shadow-xs hover:shadow-md transition-all duration-300"
               variant="outline"
