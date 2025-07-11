@@ -2,6 +2,7 @@ import EmptySummariesState from "@/components/summaries/EmptySummariesState";
 import SummaryCard from "@/components/summaries/SummaryCard";
 import { Button } from "@/components/ui/button";
 import { getSummaries } from "@/lib/summaries";
+import { hasReachedUploadLimit } from "@/lib/user";
 import { currentUser } from "@clerk/nextjs/server";
 import { Plus } from "lucide-react";
 import Link from "next/link";
@@ -12,7 +13,8 @@ export default async function DashboardPage() {
   if (!user) redirect("/sign-in");
 
   const userId = user.id;
-  const uploadLimit = 5;
+  console.log(userId);
+  const {hasReachedLimit, uploadLimit} = await hasReachedUploadLimit(userId);
   const summaries = await getSummaries(userId);
 
   return (
@@ -29,7 +31,7 @@ export default async function DashboardPage() {
               </p>
             </div>
             <div>
-              <Button
+              {!hasReachedLimit && <Button
                 variant={"link"}
                 className="group hover:no-underline bg-primary hover:bg-primary/90 hover:scale-105 transition-all duration-300"
               >
@@ -37,14 +39,14 @@ export default async function DashboardPage() {
                   <Plus className="w-5 h-5 mr-2" />
                   Upload a PDF
                 </Link>
-              </Button>
+              </Button>}
             </div>
           </div>
-          <div className="mb-6">
+          {hasReachedLimit && <div className="mb-6">
             <div className="bg-rose-50 border border-rose-200 rounded-lg text-rose-800 p-4 flex justify-between items-center">
               <p>
-                You've have reached the limit of {uploadLimit} uploads on the
-                Free Plan.
+                You've have reached the limit of {uploadLimit} summaries on the
+                Basic Plan. Upgrade to Pro to continue uploading.
               </p>
               <Button
                 variant={"outline"}
@@ -55,7 +57,7 @@ export default async function DashboardPage() {
                 </Link>
               </Button>
             </div>
-          </div>
+          </div>}
           {summaries.length === 0 ? (
             <EmptySummariesState />
           ) : (
